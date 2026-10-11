@@ -2,8 +2,9 @@
 
 import { upload } from "@vercel/blob/client";
 import { useRef, useState } from "react";
-import { DropZone } from "@/components/DropZone";
-import { FileCard } from "@/components/FileCard";
+import { BottomSheets, TopSheets } from "@/components/BackgroundSheets";
+import { Desk } from "@/components/Desk";
+import { FileRow } from "@/components/FileRow";
 import { checkFile } from "@/lib/formats";
 import type { Item } from "@/lib/types";
 
@@ -20,10 +21,10 @@ function saveMd(name: string, text: string) {
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
-    const [copied, setCopied] = useState<number | null>(null);
+  const [copied, setCopied] = useState<number | null>(null);
   const running = useRef(false);
   const queue = useRef<Item[]>([]);
-  
+
   const patch = (id: number, p: Partial<Item>) =>
     setItems((xs) => xs.map((x) => (x.id === id ? { ...x, ...p } : x)));
 
@@ -108,37 +109,54 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-16 sm:py-24">
-      <header className="mb-12 text-center">
-        <h1 className="text-5xl font-semibold leading-[1.05] tracking-[-0.035em] text-balance sm:text-6xl">
-          Turn documents into clean Markdown.
-        </h1>
-        <p className="mx-auto mt-5 max-w-lg text-lg text-muted text-balance">
-          Drop in PDFs, Word, PowerPoint, Excel and more. Get back Markdown you can copy or download.
-        </p>
-      </header>
-
-      <DropZone onFiles={add} />
-
-      {items.length > 0 && (
-        <section className="mt-12" aria-label="Files">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-medium text-muted">{items.length} file{items.length > 1 ? "s" : ""}</h2>
-            <button type="button" onClick={clearAll} className="min-h-9 rounded-md px-3 text-sm font-medium text-muted transition-colors duration-150 hover:text-fg">
-              Clear list
-            </button>
+    <div className="relative min-h-dvh overflow-x-clip">
+      <TopSheets />
+      <main className="relative z-10 mx-auto flex min-h-dvh max-w-[900px] flex-col px-4 pb-10 pt-6">
+        <header className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-accent font-mono text-[11px] font-semibold text-white" aria-hidden="true">M&darr;</span>
+            <span className="font-semibold">Markdown Converter</span>
           </div>
-          <ul className="flex flex-col gap-3">
-            {items.map((it) => (
-              <FileCard key={it.id} it={it} copied={copied === it.id} onCopy={() => copy(it)} onDownload={() => saveMd(it.file.name, it.markdown ?? "")} />
-            ))}
-          </ul>
-        </section>
-      )}
+          <span className="text-[13px] text-muted">Powered by MarkItDown</span>
+        </header>
 
-      <footer className="mt-auto pt-20 text-center text-xs text-muted">
-        Scanned PDFs, images, audio and archives aren&apos;t supported yet.
-      </footer>
-    </main>
+        <section className="py-12 text-center sm:py-16">
+          <h1 className="font-display text-[clamp(2.1rem,7vw,3rem)] font-bold leading-[1.05] text-balance" style={{ letterSpacing: "-1.6px" }}>
+            Turn documents into clean <em className="marker">Markdown.</em>
+          </h1>
+          <p className="mx-auto mt-4 max-w-md text-[15.5px] text-muted text-balance">
+            Put your documents on the desk. We&apos;ll turn each one into tidy .md.
+          </p>
+        </section>
+
+        <div className="relative">
+          <BottomSheets />
+          <Desk items={items} onFiles={add} />
+        </div>
+
+        {items.length > 0 && (
+          <section className="mt-6" aria-label="Files">
+            <div className="mb-2 flex justify-end">
+              <button type="button" onClick={clearAll} className="min-h-8 rounded-md px-2 text-[13px] font-medium text-muted transition-colors duration-150 hover:text-ink">
+                Clear list
+              </button>
+            </div>
+            <ul className="flex flex-col gap-[7px]">
+              {items.map((it) => (
+                <FileRow key={it.id} it={it} copied={copied === it.id} onCopy={() => copy(it)} onDownload={() => saveMd(it.file.name, it.markdown ?? "")} />
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <footer className="mt-auto flex items-center justify-center gap-1.5 pt-12 text-center text-xs text-muted-2">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="7" width="10" height="7" rx="1.5" />
+            <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" />
+          </svg>
+          <span>Files are uploaded to temporary storage, converted, and deleted right after. Nothing is kept.</span>
+        </footer>
+      </main>
+    </div>
   );
 }
