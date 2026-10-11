@@ -26,9 +26,9 @@ export function DropZone({ onFiles }: { onFiles: (files: FileList) => void }) {
           onDrop={(e) => { e.preventDefault(); setDrag(false); onFiles(e.dataTransfer.files); }}
           className="paper-body cursor-pointer px-6 py-14 text-center"
         >
-          <p className="font-serif text-3xl">Drop your files here</p>
+          <p className="text-2xl font-semibold tracking-tight">Drop your files here</p>
           <p className="mt-2 text-muted">or choose from your device</p>
-          <p className="mx-auto mt-6 max-w-md font-mono text-xs leading-relaxed text-muted">
+          <p className="mx-auto mt-6 max-w-md text-xs leading-relaxed text-muted">
             {SUPPORTED.map((e) => e.toUpperCase()).join(", ")} &middot; up to 100 MB each
           </p>
         </div>

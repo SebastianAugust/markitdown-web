@@ -3,7 +3,7 @@ function Doc({ x, label }: { x: number; label: string }) {
     <g transform={`translate(${x} 0)`}>
       <path d="M2 2h22l10 10v34a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z" />
       <path d="M24 2v10h10" />
-      <text x="17" y="38" textAnchor="middle" fontSize="12" fontFamily="var(--nf-mono)" fill="currentColor" stroke="none">
+      <text x="17" y="38" textAnchor="middle" fontSize="12" fontFamily="var(--nf-sans)" fontWeight="600" fill="currentColor" stroke="none">
         {label}
       </text>
     </g>

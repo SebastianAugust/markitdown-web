@@ -110,7 +110,7 @@ export default function Home() {
   return (
     <main className="mx-auto flex min-h-dvh max-w-2xl flex-col px-4 py-16 sm:py-24">
       <header className="mb-12 text-center">
-        <h1 className="font-serif text-5xl leading-[1.05] tracking-[-0.02em] text-balance sm:text-7xl">
+        <h1 className="text-5xl font-semibold leading-[1.05] tracking-[-0.035em] text-balance sm:text-6xl">
           Turn documents into clean Markdown.
         </h1>
         <p className="mx-auto mt-5 max-w-lg text-lg text-muted text-balance">

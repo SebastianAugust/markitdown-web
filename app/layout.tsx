@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const sans = Geist({ subsets: ["latin"], variable: "--nf-sans" });
-const mono = Geist_Mono({ subsets: ["latin"], variable: "--nf-mono" });
-const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", variable: "--nf-serif" });
+const sans = Inter({ subsets: ["latin"], variable: "--nf-sans", display: "swap" });
 
 export const metadata: Metadata = {
   title: "Markdown Converter",
@@ -13,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable} ${serif.variable}`}>
+    <html lang="en" className={`${sans.variable}`}>
       <body className="font-sans antialiased">{children}</body>
     </html>
   );

@@ -24,7 +24,7 @@ function FileName({ name }: { name: string }) {
   const head = name.slice(0, -10);
   const tail = name.slice(-10);
   return (
-    <span className="flex min-w-0 font-mono text-sm" title={name}>
+    <span className="flex min-w-0 text-sm font-medium" title={name}>
       <span className="truncate">{head}</span>
       <span className="shrink-0">{tail}</span>
     </span>
@@ -48,12 +48,12 @@ export function FileCard({ it, copied, onCopy, onDownload }: {
     <li className="card-in relative overflow-hidden rounded-lg border border-line bg-surface">
       <div className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
-          <span className="badge flex h-10 w-12 shrink-0 items-center justify-center rounded-md font-mono text-xs font-semibold uppercase" style={{ "--h": HUE[ext] ?? 260 } as React.CSSProperties}>
+          <span className="badge flex h-10 w-12 shrink-0 items-center justify-center rounded-md text-xs font-semibold tracking-wide uppercase" style={{ "--h": HUE[ext] ?? 260 } as React.CSSProperties}>
             {ext.slice(0, 4) || "file"}
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <FileName name={it.file.name} />
-            <span className="font-mono text-xs text-muted">{formatSize(it.file.size)}</span>
+            <span className="tnum text-xs text-muted">{formatSize(it.file.size)}</span>
           </div>
           <StatusBadge it={it} />
         </div>
