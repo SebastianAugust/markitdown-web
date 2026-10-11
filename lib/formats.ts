@@ -11,12 +11,10 @@ export const extOf = (name: string) => name.split(".").pop()?.toLowerCase() ?? "
 export function checkFile(name: string, size: number): string | null {
   const ext = extOf(name);
   if (!name.includes(".") || !(SUPPORTED as readonly string[]).includes(ext)) {
-    return ["jpg", "jpeg", "png", "gif", "webp", "mp3", "wav", "m4a", "zip"].includes(ext)
-      ? `.${ext} files (images, audio, archives) are not supported.`
-      : `Unsupported format. Supported: ${SUPPORTED.join(", ")}.`;
+    return "This file type isn't supported yet.";
   }
-  if (size > MAX_BYTES) return "File is larger than 100 MB.";
-  if (size === 0) return "File is empty.";
+  if (size > MAX_BYTES) return "This file is over 100 MB.";
+  if (size === 0) return "This file is empty.";
   return null;
 }
 
