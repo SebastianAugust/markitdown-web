@@ -46,12 +46,31 @@ export default function Home() {
     let blobUrl: string | undefined;
     try {
       patch(it.id, { status: "uploading", progress: 0 });
-      const blob = await upload(it.file.name, it.file, {
-        access: "public",
-        handleUploadUrl: "/api/blob-token",
-        multipart: it.file.size > 5 * 1024 * 1024,
-        onUploadProgress: ({ percentage }) => patch(it.id, { progress: Math.round(percentage) }),
-      });
+      // Abort if no progress event arrives for 60 s, so a hung upload cannot freeze the queue.
+      const ctl = new AbortController();
+      let stall: ReturnType<typeof setTimeout>;
+      const arm = () => {
+        clearTimeout(stall);
+        stall = setTimeout(() => ctl.abort(new Error("Upload stalled (no progress for 60 s).")), 60_000);
+      };
+      arm();
+      let blob;
+      try {
+        blob = await upload(it.file.name, it.file, {
+          access: "private",
+          handleUploadUrl: "/api/blob-token",
+          multipart: it.file.size > 5 * 1024 * 1024,
+          abortSignal: ctl.signal,
+          onUploadProgress: ({ percentage }) => {
+            arm();
+            patch(it.id, { progress: Math.round(percentage) });
+          },
+        });
+      } catch (e) {
+        throw ctl.signal.aborted ? (ctl.signal.reason as Error) : e;
+      } finally {
+        clearTimeout(stall!);
+      }
       blobUrl = blob.url;
       patch(it.id, { status: "converting" });
       const res = await fetch("/api/convert", {

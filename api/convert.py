@@ -24,7 +24,9 @@ def check_url(url):
 
 
 def download(url, path):
-    with urllib.request.urlopen(url, timeout=60) as r, open(path, "wb") as f:
+    # Private blobs: the token goes in the Authorization header. Never log the URL.
+    req = urllib.request.Request(url, headers={"authorization": f"Bearer {os.environ.get('BLOB_READ_WRITE_TOKEN', '')}"})
+    with urllib.request.urlopen(req, timeout=60) as r, open(path, "wb") as f:
         if int(r.headers.get("Content-Length") or 0) > MAX_BYTES:
             raise ConvertError(413, "File is larger than 100 MB.")
         total = 0

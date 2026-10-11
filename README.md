@@ -3,6 +3,8 @@
 Personal web app: upload documents, get Markdown (Microsoft [markitdown](https://github.com/microsoft/markitdown)).
 Next.js UI, Python serverless function, Vercel Blob for large uploads. Nothing is stored after conversion.
 
+**The Vercel Blob store must be Private** (SDK `@vercel/blob` >= 2.3).
+
 Formats: pdf, docx, pptx, xlsx, xls, csv, html, htm, json, xml, txt, epub (max 100 MB). No OCR, images, audio or zip.
 
 ## Run locally
