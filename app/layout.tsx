@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -6,10 +6,15 @@ const display = Bricolage_Grotesque({ subsets: ["latin"], weight: "700", variabl
 const sans = Geist({ subsets: ["latin"], variable: "--nf-sans", display: "swap" });
 const mono = Geist_Mono({ subsets: ["latin"], variable: "--nf-mono", display: "swap" });
 
+const description = "Turn PDF, DOCX, PPTX, XLSX and more into clean Markdown. Files are deleted right after conversion.";
+
 export const metadata: Metadata = {
   title: "Markdown Converter",
-  description: "Turn documents into clean Markdown.",
+  description,
+  openGraph: { title: "Markdown Converter", description, type: "website" },
 };
+
+export const viewport: Viewport = { themeColor: "#15120f" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

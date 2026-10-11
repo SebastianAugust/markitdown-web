@@ -108,23 +108,29 @@ export default function Home() {
     setTimeout(() => setCopied((c) => (c === it.id ? null : c)), 2000);
   }
 
+  const count = (st: Item["status"]) => items.filter((x) => x.status === st).length;
+  const summary = [
+    [count("done"), "converted"], [count("converting"), "converting"], [count("uploading"), "uploading"],
+    [count("queued"), "waiting"], [count("error"), "failed"],
+  ].filter(([n]) => n).map(([n, l]) => `${n} ${l}`).join(" \u00b7 ");
+
   return (
     <div className="relative min-h-dvh overflow-x-clip">
       <TopSheets />
       <main className="relative z-10 mx-auto flex min-h-dvh max-w-[900px] flex-col px-4 pb-10 pt-6">
         <header className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-accent font-mono text-[11px] font-semibold text-white" aria-hidden="true">M&darr;</span>
-            <span className="font-semibold">Markdown Converter</span>
+            <span className="flex size-7 items-center justify-center rounded-lg bg-accent font-mono text-[11px] font-semibold text-[#10132b]" aria-hidden="true">M&darr;</span>
+            <span className="whitespace-nowrap font-semibold">Markdown Converter</span>
           </div>
-          <span className="text-[13px] text-muted">Powered by MarkItDown</span>
+          <span className="text-[13px] text-muted-2">Powered by MarkItDown</span>
         </header>
 
         <section className="py-12 text-center sm:py-16">
           <h1 className="font-display text-[clamp(2.1rem,7vw,3rem)] font-bold leading-[1.05] text-balance" style={{ letterSpacing: "-1.6px" }}>
             Turn documents into clean <em className="marker">Markdown.</em>
           </h1>
-          <p className="mx-auto mt-4 max-w-md text-[15.5px] text-muted text-balance">
+          <p className="mx-auto mt-4 max-w-md text-[15.5px] text-muted-2 text-balance">
             Put your documents on the desk. We&apos;ll turn each one into tidy .md.
           </p>
         </section>
@@ -135,9 +141,16 @@ export default function Home() {
         </div>
 
         {items.length > 0 && (
-          <section className="mt-6" aria-label="Files">
-            <div className="mb-2 flex justify-end">
-              <button type="button" onClick={clearAll} className="min-h-8 rounded-md px-2 text-[13px] font-medium text-muted transition-colors duration-150 hover:text-ink">
+          <section className="mt-8" aria-label="Files">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="text-[15px] font-semibold">{items.length} file{items.length > 1 ? "s" : ""}</h2>
+                {summary && <p className="text-xs text-muted">{summary}</p>}
+              </div>
+              <button type="button" onClick={clearAll} className="btn-clear max-sm:w-full">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14M10 11v5m4-5v5" />
+                </svg>
                 Clear list
               </button>
             </div>
@@ -149,7 +162,7 @@ export default function Home() {
           </section>
         )}
 
-        <footer className="mt-auto flex items-center justify-center gap-1.5 pt-12 text-center text-xs text-muted-2">
+        <footer className="mt-auto flex items-center justify-center gap-1.5 pt-12 text-center text-xs text-muted-3">
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <rect x="3" y="7" width="10" height="7" rx="1.5" />
             <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" />

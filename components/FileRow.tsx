@@ -31,8 +31,8 @@ export function FileRow({ it, copied, onCopy, onDownload }: {
     : "Failed";
 
   return (
-    <li className="row-in flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[10px] bg-sheet px-3.5 py-2 shadow-[0_5px_14px_rgba(60,40,10,0.08)]">
-      <span className={`tag flex h-[26px] w-[34px] shrink-0 items-center justify-center rounded-[5px] font-mono text-[9.5px] font-semibold uppercase ${tagClass(ext)}`}>
+    <li className="row-in flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[10px] border border-[rgba(255,235,200,0.08)] bg-card px-3.5 py-2 shadow-[0_5px_14px_rgba(0,0,0,0.4)]">
+      <span className={`tag flex h-[26px] w-[34px] shrink-0 items-center justify-center rounded-[5px] font-mono text-[9.5px] font-semibold uppercase ${tagClass(ext).replace("t-", "r-")}`}>
         {ext.slice(0, 4) || "file"}
       </span>
 
@@ -45,23 +45,23 @@ export function FileRow({ it, copied, onCopy, onDownload }: {
         </div>
         {it.status === "error" && <p className="mt-0.5 text-xs text-err [overflow-wrap:anywhere]">{it.error}</p>}
         {it.status === "done" && (it.markdown ?? "").trim().length < LOW_CONTENT && (
-          <p className="mt-0.5 text-xs text-[#8a5a00]">No text found. This looks like a scanned PDF, and scanned pages aren&apos;t supported yet.</p>
+          <p className="mt-0.5 text-xs" style={{ color: "var(--warn)" }}>No text found. This looks like a scanned PDF, and scanned pages aren&apos;t supported yet.</p>
         )}
       </div>
 
       {it.status === "uploading" && (
-        <div role="progressbar" aria-label={`Uploading ${it.file.name}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={it.progress} className="h-[3px] w-[140px] max-w-full overflow-hidden rounded-full bg-line">
+        <div role="progressbar" aria-label={`Uploading ${it.file.name}`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={it.progress} className="h-[3px] w-[140px] max-w-full overflow-hidden rounded-full bg-track">
           <div className="h-full bg-accent transition-[width] duration-200" style={{ width: `${it.progress}%` }} />
         </div>
       )}
-      {it.status === "converting" && <span className="spinner" aria-hidden="true" />}
+      {it.status === "converting" && <span className="spinner spinner-dark" aria-hidden="true" />}
 
       {it.status === "done" && (
         <div className="flex gap-2 max-sm:w-full">
-          <button type="button" onClick={onCopy} className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-[7px] bg-accent px-3 text-xs font-medium text-white transition-colors duration-150 hover:bg-accent-hover max-sm:flex-1">
+          <button type="button" onClick={onCopy} className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-[7px] bg-btn px-3 text-xs font-medium text-white transition-colors duration-150 hover:bg-btn-hover max-sm:flex-1">
             {copied ? <>Copied <Check size={13} /></> : "Copy Markdown"}
           </button>
-          <button type="button" onClick={onDownload} className="inline-flex min-h-8 items-center justify-center rounded-[7px] border border-line px-3 text-xs font-medium transition-colors duration-150 hover:bg-page max-sm:flex-1">
+          <button type="button" onClick={onDownload} className="inline-flex min-h-8 items-center justify-center rounded-[7px] border border-[rgba(255,235,200,0.25)] px-3 text-xs font-medium transition-colors duration-150 hover:bg-[rgba(255,235,200,0.08)] max-sm:flex-1">
             Download .md
           </button>
         </div>

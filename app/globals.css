@@ -1,21 +1,26 @@
 @import "tailwindcss";
 
-/* Paper Desk: one warm light theme. Tokens first, components below. */
+/* Paper Desk, dark only. Tokens first, components below. */
 :root {
-  --page: #f3efe6;
-  --ink: #1d1b17;
-  --muted: #6b665a;
-  --muted-2: #6f695c;
+  --page: #15120f;
+  --ink: #f1ebe0;
+  --muted: #a39a89;
+  --muted-2: #b3a998;
+  --muted-3: #8c8373;
+  --card: #201c17;
+  --card-line: rgb(255 235 200 / 0.08);
   --sheet: #fffdf8;
   --skel: #ece7da;
-  --skel-strong: #d9d2bf;
-  --line: #d8d2c2;
-  --accent: #2a43d6;
-  --accent-hover: #2237b3;
-  --ok: #26774a;
-  --err: #b3261e;
-  --marker: #ffe27a;
-  color-scheme: light;
+  --skel-strong: #d9d3c4;
+  --track: #3a332b;
+  --accent: #7b97ff;
+  --btn: #3b55e6;
+  --btn-hover: #4a63f0;
+  --ok: #6fdca0;
+  --err: #ff8f86;
+  --warn: #ffc266;
+  --marker: rgb(255 226 122 / 0.34);
+  color-scheme: dark;
 }
 @theme inline {
   --font-sans: var(--nf-sans), -apple-system, "SF Pro Text", system-ui, sans-serif;
@@ -25,18 +30,20 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-muted-2: var(--muted-2);
-  --color-sheet: var(--sheet);
-  --color-line: var(--line);
+  --color-muted-3: var(--muted-3);
+  --color-card: var(--card);
   --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
+  --color-btn: var(--btn);
+  --color-btn-hover: var(--btn-hover);
   --color-ok: var(--ok);
   --color-err: var(--err);
+  --color-track: var(--track);
 }
 body {
   color: var(--ink);
   background:
-    radial-gradient(640px 520px at 0% 0%, rgb(255 196 160 / 0.5), transparent 70%),
-    radial-gradient(620px 560px at 100% 38%, rgb(150 176 255 / 0.4), transparent 70%),
+    radial-gradient(680px 560px at 0% 0%, rgb(255 150 90 / 0.15), transparent 70%),
+    radial-gradient(640px 600px at 100% 38%, rgb(110 140 255 / 0.2), transparent 70%),
     var(--page);
   background-attachment: fixed;
 }
@@ -49,7 +56,7 @@ body {
   -webkit-box-decoration-break: clone;
 }
 
-/* File-type tags */
+/* Type tags: light (on paper) and dark (in rows) */
 .tag { background: var(--tb); color: var(--tf); }
 .t-pdf { --tb: #fbe9e4; --tf: #b73c27; }
 .t-docx { --tb: #e6edfb; --tf: #2a5bd0; }
@@ -57,26 +64,35 @@ body {
 .t-pptx { --tb: #fdeedb; --tf: #a85a0e; }
 .t-epub { --tb: #efe6fa; --tf: #7a45c2; }
 .t-other { --tb: #ece9e1; --tf: #5f5a4e; }
+.r-pdf { --tb: rgb(255 120 100 / 0.16); --tf: #ff9a8a; }
+.r-docx { --tb: rgb(100 140 255 / 0.18); --tf: #9db8ff; }
+.r-xlsx { --tb: rgb(80 200 130 / 0.16); --tf: #6fdca0; }
+.r-pptx { --tb: rgb(255 170 70 / 0.16); --tf: #ffb766; }
+.r-epub { --tb: rgb(170 120 255 / 0.18); --tf: #c8a3ff; }
+.r-other { --tb: rgb(255 235 200 / 0.1); --tf: #c9bfae; }
 
-/* Desk */
-.desk { --dh: 240px; --k: 0.5; }
-@media (min-width: 640px) { .desk { --dh: 310px; --k: 1; } }
-.desk-surface { height: var(--dh); }
-.plank-1 { background: linear-gradient(#cf9a62, #c18a50); }
-.plank-2 { background: linear-gradient(#c48d54, #b87f45); }
-.plank-3 { background: linear-gradient(#cc9660, #bf8a4e); }
+/* Oak desk */
+.desk { --dh: 240px; --k: 0.5; --zone: 0.42; }
+@media (min-width: 640px) { .desk { --dh: 336px; --k: 1; --zone: 0.6; } }
+.desk-surface { height: var(--dh); background: linear-gradient(#dbaa70, #cf9760, #c28c55); }
+.wood { position: absolute; inset: -70px; transform: rotate(-3.5deg); }
+.wood svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .desk-outline {
   border: 2px dashed rgb(255 246 225 / 0.6);
-  transition: border-color 200ms ease-out, transform 200ms ease-out;
+  transition: border-color 200ms ease-out, transform 200ms ease-out, box-shadow 200ms ease-out;
 }
-.desk[data-drag="true"] .desk-outline { border-color: rgb(255 250 235 / 1); transform: scale(1.012); }
+.desk[data-drag="true"] .desk-outline {
+  border-color: rgb(255 252 240 / 1);
+  transform: scale(1.012);
+  box-shadow: 0 0 28px rgb(255 240 200 / 0.5), inset 0 0 28px rgb(255 240 200 / 0.25);
+}
 .desk-edge {
-  height: 18px;
-  background: linear-gradient(#8a5428, #6b3f1c, #573213);
-  box-shadow: inset 0 1px 0 rgb(255 220 170 / 0.35);
+  height: 20px;
+  background: linear-gradient(#8f5a2c, #6e411d, #4f2d11);
+  box-shadow: inset 0 1px 0 rgb(255 225 180 / 0.45);
 }
 
-/* Papers on the desk */
+/* Papers */
 .paper-pos { position: absolute; transform: translate(-50%, -50%); }
 .paper {
   width: 150px;
@@ -84,7 +100,7 @@ body {
   padding: 16px 14px;
   background: var(--sheet);
   border-radius: 3px;
-  box-shadow: 0 12px 16px rgb(30 15 3 / 0.38), 0 2px 3px rgb(30 15 3 / 0.3);
+  box-shadow: 0 14px 14px -4px rgb(30 15 3 / 0.42), 0 3px 4px rgb(30 15 3 / 0.35);
   transform: rotate(var(--rot)) scale(calc(var(--s) * var(--k)));
 }
 .paper-in { animation: paper-drop 600ms cubic-bezier(0.3, 0.7, 0.3, 1) var(--delay, 0ms) both; }
@@ -99,16 +115,27 @@ body {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner {
-  width: 14px; height: 14px; border-radius: 50%;
-  border: 2px solid var(--line); border-top-color: var(--accent);
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--spin-track, #d8d2c2); border-top-color: var(--accent);
   animation: spin 800ms linear infinite;
 }
+.spinner-dark { --spin-track: #4a4137; }
 @keyframes row-in { from { opacity: 0; transform: translateY(6px); } }
 .row-in { animation: row-in 200ms ease-out both; }
+
+.btn-clear {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 44px; padding: 0 20px; border-radius: 11px;
+  font-size: 14.5px; font-weight: 600; cursor: pointer;
+  background: rgb(211 58 48 / 0.14); color: #ff8f86; border: 1.5px solid rgb(255 130 120 / 0.45);
+  transition: background 150ms, color 150ms, border-color 150ms, transform 150ms, box-shadow 150ms;
+}
+.btn-clear:hover { background: #d33a30; color: #fff; border-color: #d33a30; transform: translateY(-1px); box-shadow: 0 8px 16px rgb(211 58 48 / 0.35); }
+.btn-clear:active { transform: none; box-shadow: none; background: #b3261e; border-color: #b3261e; }
 
 @media (prefers-reduced-motion: reduce) {
   .paper-in { animation: paper-fade 200ms ease-out var(--delay, 0ms) both; }
   .row-in { animation: none; }
   .spinner { animation-duration: 2.4s; }
-  .desk-outline, .desk[data-drag="true"] .desk-outline { transition: none; transform: none; }
+  .desk-outline, .desk[data-drag="true"] .desk-outline, .btn-clear { transition: none; transform: none; }
 }

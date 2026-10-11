@@ -13,15 +13,15 @@ function layout(items: Item[]) {
   const rows = n <= 5 ? 1 : n <= 10 ? 2 : Math.ceil(Math.sqrt(n / 2.5));
   const cols = Math.ceil(n / rows);
   const spacing = Math.min(1 / cols, 0.19);
-  const cellH = (0.74 * 310) / rows;
+  const cellH = (0.6 * 336) / rows;
   const s = Math.min(1, (cellH / 196) * 1.15, ((spacing * 900) / 150) * 1.25);
   return items.map((it, i) => {
     const r = Math.floor(i / cols);
     const inRow = Math.min(cols, n - r * cols);
     const c = i - r * cols;
     const x = 0.5 + (c - (inRow - 1) / 2) * spacing + (rnd(it.id, 1) - 0.5) * 0.024;
-    const y = 0.06 + ((r + 0.5) * 0.74) / rows + (rnd(it.id, 2) - 0.5) * 0.08;
-    return { s, left: `${(x * 100).toFixed(2)}%`, top: `calc(var(--dh) * ${y.toFixed(3)})`, rot: -7 + rnd(it.id, 3) * 13 };
+    const y = (r + 0.5) / rows + (rnd(it.id, 2) - 0.5) * 0.12 / rows;
+    return { s, left: `${(x * 100).toFixed(2)}%`, top: `calc(var(--dh) * (0.05 + ${y.toFixed(3)} * var(--zone)))`, rot: -7 + rnd(it.id, 3) * 13 };
   });
 }
 
