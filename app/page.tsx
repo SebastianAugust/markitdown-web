@@ -108,6 +108,15 @@ export default function Home() {
     setTimeout(() => setCopied((c) => (c === it.id ? null : c)), 2000);
   }
 
+  const doneItems = items.filter((x) => x.status === "done");
+  async function downloadAll() {
+    // Staggered: browsers drop back-to-back programmatic downloads.
+    for (const it of doneItems) {
+      saveMd(it.file.name, it.markdown ?? "");
+      await new Promise((r) => setTimeout(r, 300));
+    }
+  }
+
   const count = (st: Item["status"]) => items.filter((x) => x.status === st).length;
   const summary = [
     [count("done"), "converted"], [count("converting"), "converting"], [count("uploading"), "uploading"],
@@ -147,12 +156,22 @@ export default function Home() {
                 <h2 className="text-[15px] font-semibold">{items.length} file{items.length > 1 ? "s" : ""}</h2>
                 {summary && <p className="text-xs text-muted">{summary}</p>}
               </div>
+              <div className="flex gap-2 max-sm:w-full max-sm:flex-col">
+              {doneItems.length > 1 && (
+                <button type="button" onClick={downloadAll} className="inline-flex h-11 items-center justify-center gap-2 rounded-[11px] border-[1.5px] border-[rgba(255,235,200,0.25)] px-5 text-[14.5px] font-semibold transition-colors duration-150 hover:bg-[rgba(255,235,200,0.08)]">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14" />
+                  </svg>
+                  Download all ({doneItems.length})
+                </button>
+              )}
               <button type="button" onClick={clearAll} className="btn-clear max-sm:w-full">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M3 6h18M8 6V4h8v2m-9 0 1 14h8l1-14M10 11v5m4-5v5" />
                 </svg>
                 Clear list
               </button>
+              </div>
             </div>
             <ul className="flex flex-col gap-[7px]">
               {items.map((it) => (
