@@ -10,18 +10,21 @@ import type { Item } from "@/lib/types";
 
 let nextId = 1;
 
-function saveMd(name: string, text: string) {
-  const base = name.replace(/\.[^.]+$/, "");
+function save(name: string, blob: Blob, ext: "md" | "zip") {
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([text], { type: "text/markdown;charset=utf-8" }));
-  a.download = `${base}.md`;
+  a.href = URL.createObjectURL(blob);
+  a.download = `${name.replace(/\.[^.]+$/, "")}.${ext}`;
   a.click();
   URL.revokeObjectURL(a.href);
 }
 
+const saveItem = (it: Item) =>
+  it.zip ? save(it.file.name, it.zip, "zip") : save(it.file.name, new Blob([it.markdown ?? ""], { type: "text/markdown;charset=utf-8" }), "md");
+
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
   const [copied, setCopied] = useState<number | null>(null);
+  const [withImages, setWithImages] = useState(true);
   const running = useRef(false);
   const queue = useRef<Item[]>([]);
 
@@ -62,8 +65,12 @@ export default function Home() {
       const res = await fetch("/api/convert", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ url: blob.url, filename: it.file.name }),
+        body: JSON.stringify({ url: blob.url, filename: it.file.name, images: it.images }),
       });
+      if (res.ok && res.headers.get("content-type")?.includes("application/zip")) {
+        patch(it.id, { status: "done", zip: await res.blob(), imageCount: Number(res.headers.get("x-image-count")) || undefined });
+        return;
+      }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Couldn't convert this file. Try again or check the format.");
       patch(it.id, { status: "done", markdown: data.markdown ?? "" });
@@ -90,7 +97,7 @@ export default function Home() {
   function add(files: FileList | File[]) {
     const fresh: Item[] = Array.from(files).map((file) => {
       const error = checkFile(file.name, file.size);
-      return { id: nextId++, file, status: error ? "error" : "queued", progress: 0, error: error ?? undefined };
+      return { id: nextId++, file, status: error ? "error" : "queued", progress: 0, error: error ?? undefined, images: withImages };
     });
     setItems((xs) => [...xs, ...fresh]);
     queue.current.push(...fresh.filter((f) => f.status === "queued"));
@@ -112,7 +119,7 @@ export default function Home() {
   async function downloadAll() {
     // Staggered: browsers drop back-to-back programmatic downloads.
     for (const it of doneItems) {
-      saveMd(it.file.name, it.markdown ?? "");
+      saveItem(it);
       await new Promise((r) => setTimeout(r, 300));
     }
   }
@@ -149,6 +156,14 @@ export default function Home() {
           <Desk items={items} onFiles={add} />
         </div>
 
+        <label className="mx-auto mt-6 flex min-h-6 max-w-md cursor-pointer items-start gap-2.5 text-[13.5px] text-muted-2">
+          <input type="checkbox" checked={withImages} onChange={(e) => setWithImages(e.target.checked)} className="mt-0.5 size-4 shrink-0 cursor-pointer accent-accent" />
+          <span>
+            <span className="font-medium text-ink">Sertakan gambar</span>
+            <span className="block text-xs text-muted">Hasilnya ZIP berisi .md dan folder images/. Dokumen tanpa gambar tetap berupa .md biasa.</span>
+          </span>
+        </label>
+
         {items.length > 0 && (
           <section className="mt-8" aria-label="Files">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -175,7 +190,7 @@ export default function Home() {
             </div>
             <ul className="flex flex-col gap-[7px]">
               {items.map((it) => (
-                <FileRow key={it.id} it={it} copied={copied === it.id} onCopy={() => copy(it)} onDownload={() => saveMd(it.file.name, it.markdown ?? "")} />
+                <FileRow key={it.id} it={it} copied={copied === it.id} onCopy={() => copy(it)} onDownload={() => saveItem(it)} />
               ))}
             </ul>
           </section>

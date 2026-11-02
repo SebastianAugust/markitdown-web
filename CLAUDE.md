@@ -9,7 +9,7 @@ Next.js (App Router, TS) + Tailwind v4; Python function `api/convert.py` (markit
 - `app/page.tsx` single-page UI, sequential per-file queue (upload -> convert -> delete blob)
 - `app/api/blob-token/route.ts` handleUpload token (ext + 100 MB checks)
 - `app/api/blob-delete/route.ts` backup blob delete
-- `api/convert.py` download to /tmp, convert, delete file + blob (finally)
+- `api/convert.py` download to /tmp, convert, delete file + blob (finally); body `{url, filename, images?}` -> JSON `{markdown}` or `application/zip` (+ `x-image-count`)
 - `lib/formats.ts` shared allowed formats / size / Blob-URL check
 - `scripts/test_convert.py` local Python test, no Blob
 

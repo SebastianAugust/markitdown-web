@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { extOf } from "@/lib/formats";
 import { tagClass } from "@/lib/filetype";
 import type { Item } from "@/lib/types";
@@ -16,6 +17,15 @@ function formatSize(n: number) {
   return `${(n / 1024 / 1024).toFixed(1)} MB`;
 }
 
+function Elapsed() {
+  const [s, setS] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setS((n) => n + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return <>{s >= 5 ? ` ${s}s` : ""}</>;
+}
+
 export function FileRow({ it, copied, onCopy, onDownload }: {
   it: Item;
   copied: boolean;
@@ -26,7 +36,7 @@ export function FileRow({ it, copied, onCopy, onDownload }: {
   const status =
     it.status === "queued" ? "Waiting…"
     : it.status === "uploading" ? `Uploading ${it.progress}%`
-    : it.status === "converting" ? "Converting…"
+    : it.status === "converting" ? <>{it.images ? "Converting, extracting images…" : "Converting…"}<Elapsed /></>
     : it.status === "done" ? null
     : "Failed";
 
@@ -40,11 +50,11 @@ export function FileRow({ it, copied, onCopy, onDownload }: {
         <div className="flex items-baseline">
           <span className="truncate text-[13.5px] font-medium" title={it.file.name}>{it.file.name}</span>
           <span role="status" aria-live="polite" className={`ml-2 shrink-0 text-xs ${it.status === "done" ? "flex items-center gap-1 text-ok" : it.status === "error" ? "text-err" : "text-muted"}`}>
-            {it.status === "done" ? <><Check /> Converted &middot; {formatSize(it.file.size)}</> : status}
+            {it.status === "done" ? <><Check /> Converted &middot; {formatSize(it.file.size)}{it.imageCount ? ` \u00b7 ${it.imageCount} gambar` : ""}</> : status}
           </span>
         </div>
         {it.status === "error" && <p className="mt-0.5 text-xs text-err [overflow-wrap:anywhere]">{it.error}</p>}
-        {it.status === "done" && (it.markdown ?? "").trim().length < LOW_CONTENT && (
+        {it.status === "done" && !it.zip && (it.markdown ?? "").trim().length < LOW_CONTENT && (
           <p className="mt-0.5 text-xs" style={{ color: "var(--warn)" }}>No text found. This looks like a scanned PDF, and scanned pages aren&apos;t supported yet.</p>
         )}
       </div>
@@ -58,12 +68,20 @@ export function FileRow({ it, copied, onCopy, onDownload }: {
 
       {it.status === "done" && (
         <div className="flex gap-2 max-sm:w-full">
-          <button type="button" onClick={onCopy} className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-[7px] bg-btn px-3 text-xs font-medium text-white transition-colors duration-150 hover:bg-btn-hover max-sm:flex-1">
-            {copied ? <>Copied <Check size={13} /></> : "Copy Markdown"}
-          </button>
-          <button type="button" onClick={onDownload} className="inline-flex min-h-8 items-center justify-center rounded-[7px] border border-[rgba(255,235,200,0.25)] px-3 text-xs font-medium transition-colors duration-150 hover:bg-[rgba(255,235,200,0.08)] max-sm:flex-1">
-            Download .md
-          </button>
+          {it.zip ? (
+            <button type="button" onClick={onDownload} className="inline-flex min-h-8 items-center justify-center rounded-[7px] bg-btn px-3 text-xs font-medium text-white transition-colors duration-150 hover:bg-btn-hover max-sm:flex-1">
+              Download .zip
+            </button>
+          ) : (
+            <>
+              <button type="button" onClick={onCopy} className="inline-flex min-h-8 items-center justify-center gap-1.5 rounded-[7px] bg-btn px-3 text-xs font-medium text-white transition-colors duration-150 hover:bg-btn-hover max-sm:flex-1">
+                {copied ? <>Copied <Check size={13} /></> : "Copy Markdown"}
+              </button>
+              <button type="button" onClick={onDownload} className="inline-flex min-h-8 items-center justify-center rounded-[7px] border border-[rgba(255,235,200,0.25)] px-3 text-xs font-medium transition-colors duration-150 hover:bg-[rgba(255,235,200,0.08)] max-sm:flex-1">
+                Download .md
+              </button>
+            </>
+          )}
         </div>
       )}
     </li>
